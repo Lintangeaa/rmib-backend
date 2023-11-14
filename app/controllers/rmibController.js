@@ -1,8 +1,6 @@
-const { Rmib, User, Mahasiswa } = require('../db/models');
+const { Rmib, User, Mahasiswa } = require('../../db/models');
 const Joi = require('joi');
-const catchAsync = require('../utils/catchAsync');
-const ExcelJS = require('exceljs');
-const fs = require('fs').promises;
+const catchAsync = require('../util/catchAsync');
 
 const userIdExist = async (e) => {
   const data = await Rmib.findOne({
@@ -138,54 +136,5 @@ module.exports = {
         message: 'Data Kosong',
       });
     }
-  }),
-  deleteRmib: catchAsync(async (req, res) => {
-    const { id } = req.params;
-    const data = await Rmib.destroy({
-      where: {
-        id: id,
-      },
-    });
-
-    if (data > 0) {
-      res.status(200).json({
-        status: true,
-        message: 'Data berhasil dihapus',
-        data,
-      });
-    }
-    res.status(200).json({
-      status: false,
-      message: 'Data tidak dihapus karena tidak ada',
-    });
-  }),
-  exportExcel: catchAsync(async (req, res) => {
-    const data = await Rmib.findAll({});
-
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Sheet 1');
-
-    worksheet.addRow(['Name', 'Email']);
-
-    // Add data from the data model to the worksheet
-    data.forEach((item) => {
-      worksheet.addRow([item.name, item.email]);
-    });
-
-    // Serialize the Excel workbook to a buffer
-    const buffer = await workbook.xlsx.writeBuffer();
-
-    // Set the response headers for Excel
-    res.setHeader(
-      'Content-Type',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    );
-    res.setHeader(
-      'Content-Disposition',
-      'attachment; filename="exported.xlsx"',
-    );
-
-    // Send the Excel file to the client
-    res.send(buffer);
   }),
 };

@@ -1,22 +1,19 @@
 var express = require('express');
+
+const auth = require('../app/middlewares/auth');
 const {
   Register,
-  getAll,
+  getAllUsers,
   getAllMahasiswa,
-  getMahasiswaById,
-} = require('../controllers/userController');
-const { login, whoAmi } = require('../controllers/authController');
-const auth = require('../middlewares/auth');
+  deleteUsers,
+} = require('../app/controllers/userController');
 
 var router = express.Router();
 
-/* GET users listing. */
-router.get('/', auth, getAll);
-router.get('/mahasiswa', auth, getAllMahasiswa);
-router.get('/mahasiswa/:userId', auth, getMahasiswaById);
-
-router.get('/me', auth, whoAmi);
-
+router.get('/', getAllUsers);
 router.post('/', Register);
+router.delete('/', deleteUsers);
+
+router.get('/mahasiswa', getAllMahasiswa);
 
 module.exports = router;

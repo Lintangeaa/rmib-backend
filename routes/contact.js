@@ -1,9 +1,8 @@
-var express = require("express")
-const { addContact, getAllContact } = require("../controllers/learnController")
+var express = require('express');
+// const { addContact } = require("../controllers/learnController")
 
-var router = express.Router()
+var router = express.Router();
 
-router.post("/", addContact)
-router.get("/", getAllContact)
+// router.post("/", addContact)
 
-module.exports = router
+module.exports = router;

@@ -1,18 +1,16 @@
 var express = require('express');
 
-const auth = require('../middlewares/auth');
+const auth = require('../app/middlewares/auth');
 const {
   saveResult,
-  getByUserId,
   getAllRmib,
-  deleteRmib,
-} = require('../controllers/rmibController');
+  getByUserId,
+} = require('../app/controllers/rmibController');
 
 var router = express.Router();
 
-router.post('/', auth, saveResult);
-router.get('/', auth, getAllRmib);
-router.get('/:userId', auth, getByUserId);
-router.delete('/:id', auth, deleteRmib);
+router.post('/', saveResult);
+router.get('', getAllRmib);
+router.get('/:userId', getByUserId);
 
 module.exports = router;
