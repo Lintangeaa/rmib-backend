@@ -6,14 +6,22 @@ const {
   getAllUsers,
   getAllMahasiswa,
   deleteUsers,
+  getMahasiswaById,
+  softDelete,
+  updateMahasiswa,
+  resetPassword,
 } = require('../app/controllers/userController');
+const { isAdmin, isMahasiswa } = require('../app/middlewares/rbac');
 
 var router = express.Router();
 
-router.get('/', getAllUsers);
+router.get('/', auth, isAdmin, getAllUsers);
 router.post('/', Register);
-router.delete('/', deleteUsers);
+router.put('/deactive', softDelete);
+router.put('/reset-password/:id', auth, isAdmin, resetPassword);
 
-router.get('/mahasiswa', getAllMahasiswa);
+router.get('/mahasiswa', auth, isAdmin, getAllMahasiswa);
+router.get('/mahasiswa/:id', getMahasiswaById);
+router.put('/mahasiswa/:id', auth, isAdmin, updateMahasiswa);
 
 module.exports = router;

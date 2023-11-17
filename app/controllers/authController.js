@@ -1,8 +1,8 @@
-const { User } = require('../db/models');
+const { User, Mahasiswa } = require('../../db/models');
 const Joi = require('joi');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const catchAsync = require('../utils/catchAsync');
+const catchAsync = require('../util/catchAsync');
 
 const loginSchema = Joi.object({
   email: Joi.string().required(),
@@ -26,11 +26,17 @@ module.exports = {
       where: {
         email: email,
       },
+      include: [{ model: Mahasiswa }],
     });
     if (!data) {
-      return res.status(200).json({
+      return res.status(404).json({
         status: false,
         message: 'Pengguna tidak ditemukan',
+      });
+    } else if (data.status != 'aktif') {
+      return res.status(404).json({
+        status: false,
+        message: 'Akun anda tidak aktif',
       });
     } else {
       const isPasswordValid = bcrypt.compareSync(password, data.password);
@@ -38,26 +44,47 @@ module.exports = {
       if (!isPasswordValid) {
         return res.status(200).json({
           status: false,
-          message: 'Email or Password incorect',
+          message: 'Password Salah',
         });
       } else {
-        const payload = {
-          id: data.id,
-          username: data.username,
-          email: data.email,
-          password: data.password,
-          role: data.role,
-        };
+        if (data.role == 'admin') {
+          const payload = {
+            id: data.id,
+            username: data.username,
+            email: data.email,
+            role: data.role,
+          };
 
-        const token = jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: '1m' });
+          const token = jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: '3h' });
 
-        res.status(200).json({
-          status: true,
-          message: 'Login Berhasil',
+          res.status(200).json({
+            status: true,
+            message: 'Login Berhasil',
+            token,
+            payload,
+          });
+        } else {
+          const payload = {
+            id: data.id,
+            username: data.username,
+            email: data.email,
+            role: data.role,
+            name: data.Mahasiswa?.name ?? null,
+            nim: data.Mahasiswa?.nim ?? null,
+            gender: data.Mahasiswa?.gender ?? null,
+            prodi: data.Mahasiswa?.prodi ?? null,
+            phone: data.Mahasiswa?.phone ?? null,
+          };
 
-          token,
-          payload,
-        });
+          const token = jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: '3h' });
+
+          res.status(200).json({
+            status: true,
+            message: 'Login Berhasil',
+            token,
+            payload,
+          });
+        }
       }
     }
   }),

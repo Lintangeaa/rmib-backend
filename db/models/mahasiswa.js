@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       this.belongsTo(models.User, { foreignKey: 'userId' });
+      this.hasOne(models.Rmib, { foreignKey: 'userId' });
     }
   }
   Mahasiswa.init(
@@ -16,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       userId: DataTypes.STRING,
       name: DataTypes.STRING,
       nim: DataTypes.STRING,
+      gender: DataTypes.ENUM(['laki-laki', 'perempuan']),
       prodi: DataTypes.STRING,
       phone: DataTypes.STRING,
       status: DataTypes.BOOLEAN,

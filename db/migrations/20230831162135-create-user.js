@@ -20,6 +20,10 @@ module.exports = {
       role: {
         type: Sequelize.ENUM(['admin', 'mahasiswa']),
       },
+      status: {
+        type: Sequelize.ENUM(['aktif', 'nonaktif']),
+        defaultValue: 'aktif',
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

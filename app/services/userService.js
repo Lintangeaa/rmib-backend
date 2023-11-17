@@ -1,14 +1,17 @@
 const { User, Mahasiswa } = require('../../db/models');
 const { v4: uuidv4 } = require('uuid');
+const bcrypt = require('bcrypt');
+const { userSchema } = require('../util/validator');
 
 async function createUser({ username, email, password, role }) {
   try {
     const userId = uuidv4();
+    const hashedPassword = await bcrypt.hash(password, 10);
     const data = await User.create({
       id: userId,
       username,
       email,
-      password,
+      password: hashedPassword,
       role,
     });
 
@@ -25,6 +28,7 @@ async function createMahasiswa({
   role,
   name,
   nim,
+  gender,
   prodi,
   phone,
 }) {
@@ -35,10 +39,11 @@ async function createMahasiswa({
   } else {
     try {
       const data = await Mahasiswa.create({
-        id: uuidv4(),
+        id: user.data.id,
         userId: user.data.id,
         name,
         nim,
+        gender,
         prodi,
         phone,
       });
@@ -90,9 +95,40 @@ async function getAllUser({ whereCondition, page, limit, additional }) {
   }
 }
 
+async function updateUser({ id, email, name, nim, prodi, phone }) {
+  try {
+    await Mahasiswa.update(
+      {
+        name,
+        nim,
+        prodi,
+        phone,
+      },
+      {
+        where: {
+          userId: id,
+        },
+      },
+    );
+    await User.update(
+      {
+        email,
+      },
+      {
+        where: { id: id },
+      },
+    );
+
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
 module.exports = {
   createUser,
   createMahasiswa,
   getAllUser,
   deleteUser,
+  updateUser,
 };

@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.User, { foreignKey: 'userId' });
+      this.belongsTo(models.Mahasiswa, { foreignKey: 'userId' });
     }
   }
   Rmib.init(
@@ -17,17 +17,6 @@ module.exports = (sequelize, DataTypes) => {
       userId: DataTypes.STRING,
       result: DataTypes.STRING,
       minat: DataTypes.STRING,
-      pertama: DataTypes.STRING,
-      kedua: DataTypes.STRING,
-      ketiga: DataTypes.STRING,
-      keempat: DataTypes.STRING,
-      kelima: DataTypes.STRING,
-      keenam: DataTypes.STRING,
-      ketujuh: DataTypes.STRING,
-      kelapan: DataTypes.STRING,
-      kesembilan: DataTypes.STRING,
-      kesepuluh: DataTypes.STRING,
-      kesebelas: DataTypes.STRING,
     },
     {
       sequelize,

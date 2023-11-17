@@ -1,6 +1,7 @@
 var express = require('express');
 
 const auth = require('../app/middlewares/auth');
+const { isMahasiswa } = require('../app/middlewares/rbac');
 const {
   saveResult,
   getAllRmib,
@@ -9,7 +10,7 @@ const {
 
 var router = express.Router();
 
-router.post('/', saveResult);
+router.post('/', auth, isMahasiswa, saveResult);
 router.get('', getAllRmib);
 router.get('/:userId', getByUserId);
 

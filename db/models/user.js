@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
       email: DataTypes.STRING,
       password: DataTypes.STRING,
       role: DataTypes.ENUM(['admin', 'mahasiswa']),
+      status: {
+        type: DataTypes.ENUM(['aktif', 'nonaktif']),
+        defaultValue: 'aktif',
+      },
     },
     {
       sequelize,

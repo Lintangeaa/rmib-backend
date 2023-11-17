@@ -10,12 +10,16 @@ module.exports = {
       },
       userId: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       name: {
         type: Sequelize.STRING,
       },
       nim: {
         type: Sequelize.STRING,
+      },
+      gender: {
+        type: Sequelize.ENUM(['laki-laki', 'perempuan']),
       },
       prodi: {
         type: Sequelize.STRING,

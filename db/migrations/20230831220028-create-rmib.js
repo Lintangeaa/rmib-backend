@@ -9,48 +9,12 @@ module.exports = {
         type: Sequelize.STRING,
       },
       userId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
       },
       result: {
         type: Sequelize.STRING,
       },
       minat: {
-        type: Sequelize.STRING,
-      },
-      pertama: {
-        type: Sequelize.STRING,
-      },
-      kedua: {
-        type: Sequelize.STRING,
-      },
-      ketiga: {
-        type: Sequelize.STRING,
-      },
-      keempat: {
-        type: Sequelize.STRING,
-      },
-      kelima: {
-        type: Sequelize.STRING,
-      },
-      keenam: {
-        type: Sequelize.STRING,
-      },
-      ketujuh: {
-        type: Sequelize.STRING,
-      },
-      kelapan: {
-        type: Sequelize.STRING,
-      },
-      kesembilan: {
-        type: Sequelize.STRING,
-      },
-      kesepuluh: {
-        type: Sequelize.STRING,
-      },
-      kesebelas: {
-        type: Sequelize.STRING,
-      },
-      keduabelas: {
         type: Sequelize.STRING,
       },
       createdAt: {
