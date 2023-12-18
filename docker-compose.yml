@@ -1,0 +1,17 @@
+version: '3.7'
+services:
+  rmib-be:
+    image: rmib-be
+    build: .
+    container_name: rmib-be
+    env_file:
+      - ./.env
+    restart: always
+    ports:
+      - '8100:3000'
+    networks:
+      - rmib
+networks:
+  rmib:
+    name: rmib
+    driver: bridge
