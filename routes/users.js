@@ -10,6 +10,7 @@ const {
   softDelete,
   updateMahasiswa,
   resetPassword,
+  downloadAllMahasiswaExcel,
 } = require('../app/controllers/userController');
 const { isAdmin, isMahasiswa } = require('../app/middlewares/rbac');
 
@@ -21,7 +22,13 @@ router.put('/deactive', softDelete);
 router.put('/reset-password/:id', auth, isAdmin, resetPassword);
 
 router.get('/mahasiswa', auth, isAdmin, getAllMahasiswa);
-router.get('/mahasiswa/:id', getMahasiswaById);
+router.get('/mahasiswa/detail/:id', getMahasiswaById);
 router.put('/mahasiswa/:id', auth, isAdmin, updateMahasiswa);
+router.get(
+  '/mahasiswa/download-excel',
+  auth,
+  isAdmin,
+  downloadAllMahasiswaExcel,
+);
 
 module.exports = router;

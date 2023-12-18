@@ -73,7 +73,6 @@ exports.getAllRmib = catchAsync(async (req, res) => {
       attributes: ['id', 'username', 'email', 'role'],
       include: {
         model: Mahasiswa,
-        // Menyesuaikan dengan kunci yang digunakan dalam tabel Mahasiswa
       },
     },
   });

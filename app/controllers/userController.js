@@ -1,4 +1,4 @@
-const Joi = require('joi');
+const XLSX = require('xlsx');
 const bcrypt = require('bcrypt');
 const catchAsync = require('../util/catchAsync');
 const { Op, where } = require('sequelize');
@@ -143,6 +143,76 @@ exports.getAllMahasiswa = catchAsync(async (req, res) => {
       totalPages: Math.ceil(users.count / limit),
       data,
     });
+  }
+});
+
+exports.downloadAllMahasiswaExcel = catchAsync(async (req, res) => {
+  const { page = 1, limit = 10 } = req.query;
+  const offset = (page - 1) * limit;
+  const whereCondition = { role: 'mahasiswa' };
+
+  const users = await User.findAndCountAll({
+    include: [
+      {
+        model: Mahasiswa,
+        attributes: ['name', 'nim', 'prodi', 'phone', 'gender'],
+        include: [{ model: Rmib, attributes: ['result', 'minat'] }],
+      },
+    ],
+    limit: parseInt(limit),
+    offset: offset,
+    where: whereCondition,
+  });
+
+  if (users.rows.length <= 0) {
+    return res.status(404).json({
+      status: false,
+      message: 'Data not found!',
+    });
+  } else {
+    const datas = users.rows.map((e, index) => {
+      return {
+        no: index + 1,
+        username: e.username,
+        email: e.email,
+        status: e.status,
+        name: e.Mahasiswa.name,
+        nim: e.Mahasiswa.nim,
+        gender: e.Mahasiswa.gender,
+        prodi: e.Mahasiswa.prodi,
+        phone: e.Mahasiswa.phone,
+        minat: e.Mahasiswa.Rmib?.minat ?? 'belum test',
+        hasil: (() => {
+          try {
+            const resultArray = JSON.parse(e.Mahasiswa.Rmib?.result);
+            return Array.isArray(resultArray)
+              ? resultArray
+                  .map((item, innerIndex) => `${innerIndex + 1}.${item}`)
+                  .join(', ')
+              : 'belum test';
+          } catch (error) {
+            return 'belum test';
+          }
+        })(),
+      };
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(datas);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Opportunity');
+
+    const buffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
+
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename=Opportunity.xlsx',
+    );
+
+    res.send(buffer);
   }
 });
 
