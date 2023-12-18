@@ -24,11 +24,6 @@ router.put('/reset-password/:id', auth, isAdmin, resetPassword);
 router.get('/mahasiswa', auth, isAdmin, getAllMahasiswa);
 router.get('/mahasiswa/detail/:id', getMahasiswaById);
 router.put('/mahasiswa/:id', auth, isAdmin, updateMahasiswa);
-router.get(
-  '/mahasiswa/download-excel',
-  auth,
-  isAdmin,
-  downloadAllMahasiswaExcel,
-);
+router.get('/mahasiswa/download-excel', downloadAllMahasiswaExcel);
 
 module.exports = router;

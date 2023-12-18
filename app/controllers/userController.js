@@ -212,7 +212,8 @@ exports.downloadAllMahasiswaExcel = catchAsync(async (req, res) => {
       'attachment; filename=Opportunity.xlsx',
     );
 
-    res.send(buffer);
+    res.write(buffer, 'binary');
+    res.end(null, 'binary');
   }
 });
 
