@@ -368,3 +368,45 @@ exports.resetPassword = catchAsync(async (req, res) => {
     });
   }
 });
+
+exports.updateUser = catchAsync(async (req, res) => {
+  const id = req.user.id;
+  const { email, username, newPassword, oldPassword } = req.body;
+
+  const user = await User.findByPk(id);
+
+  if (!user) {
+    return res.status(404).json({
+      status: false,
+      message: 'User tidak ditemukan',
+    });
+  } else {
+    if (newPassword && oldPassword) {
+      const passwordMatch = await bcrypt.compare(oldPassword, user.password);
+
+      if (passwordMatch) {
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        await user.update({ email, username, password: hashedPassword });
+
+        return res.status(200).json({
+          status: true,
+          message: 'Update profile berhasil',
+        });
+      } else {
+        return res.status(400).json({
+          status: false,
+          message: 'Password lama salah',
+        });
+      }
+    } else {
+      await user.update({ username: username, email: email });
+
+      return res.status(200).json({
+        status: true,
+        message: 'Update profile berhasil',
+      });
+    }
+
+    return res.status(200).json({ user, passwordMatch });
+  }
+});

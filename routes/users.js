@@ -11,6 +11,7 @@ const {
   updateMahasiswa,
   resetPassword,
   downloadAllMahasiswaExcel,
+  updateUser,
 } = require('../app/controllers/userController');
 const { isAdmin, isMahasiswa } = require('../app/middlewares/rbac');
 
@@ -20,6 +21,8 @@ router.get('/', auth, isAdmin, getAllUsers);
 router.post('/', Register);
 router.put('/deactive', softDelete);
 router.put('/reset-password/:id', auth, isAdmin, resetPassword);
+
+router.put('/update', auth, updateUser);
 
 router.get('/mahasiswa', auth, isAdmin, getAllMahasiswa);
 router.get('/mahasiswa/detail/:id', getMahasiswaById);
