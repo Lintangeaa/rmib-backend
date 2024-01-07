@@ -18,7 +18,7 @@ exports.Register = catchAsync(async (req, res) => {
 
   await userSchema.validateAsync(
     { username, email, password, role },
-    { abortEarly: false },
+    { abortEarly: true },
   );
 
   if (role == 'admin') {
@@ -39,7 +39,7 @@ exports.Register = catchAsync(async (req, res) => {
   } else {
     await mahasiswaSchema.validateAsync(
       { name, nim, gender, prodi, phone },
-      { abortEarly: false },
+      { abortEarly: true },
     );
     const result = await createMahasiswa({
       username,
@@ -109,16 +109,18 @@ exports.getAllMahasiswa = catchAsync(async (req, res) => {
       {
         model: Mahasiswa,
         attributes: ['name', 'nim', 'prodi', 'phone', 'gender'],
+        include: [{ model: Rmib, attributes: ['minat'] }],
       },
     ],
     limit: parseInt(limit),
     offset: offset,
     where: whereCondition,
   });
+
   if (users.rows.length <= 0) {
     return res.status(404).json({
       status: false,
-      message: 'Data not found!',
+      message: 'Mahasiswa Tidak Ditemukan!',
     });
   } else {
     const data = users.rows.map((e) => {
@@ -132,6 +134,7 @@ exports.getAllMahasiswa = catchAsync(async (req, res) => {
         gender: e.Mahasiswa.gender,
         prodi: e.Mahasiswa.prodi,
         phone: e.Mahasiswa.phone,
+        minat: e.Mahasiswa?.Rmib?.minat ?? 'Belum Tes',
       };
     });
 
@@ -264,7 +267,6 @@ exports.getMahasiswaById = catchAsync(async (req, res) => {
 exports.deleteUsers = catchAsync(async (req, res) => {
   const { id } = req.query;
 
-  console.log(id);
   const result = await deleteUser(id);
   if (result.success) {
     res.status(200).json({
