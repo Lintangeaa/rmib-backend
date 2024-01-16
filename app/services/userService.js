@@ -29,6 +29,7 @@ async function createMahasiswa({
   name,
   nim,
   gender,
+  angkatan,
   prodi,
   phone,
 }) {
@@ -45,6 +46,7 @@ async function createMahasiswa({
         nim,
         gender,
         prodi,
+        angkatan,
         phone,
       });
       return { success: true, data: data };
@@ -95,7 +97,7 @@ async function getAllUser({ whereCondition, page, limit, additional }) {
   }
 }
 
-async function updateUser({ id, email, name, nim, prodi, phone }) {
+async function updateUser({ id, email, name, nim, prodi, phone, angkatan }) {
   try {
     await Mahasiswa.update(
       {
@@ -103,6 +105,7 @@ async function updateUser({ id, email, name, nim, prodi, phone }) {
         nim,
         prodi,
         phone,
+        angkatan,
       },
       {
         where: {

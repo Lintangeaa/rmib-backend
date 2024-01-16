@@ -64,6 +64,9 @@ const mahasiswaSchema = Joi.object({
   gender: Joi.string().required().messages({
     'string.empty': 'Gender tidak boleh kosong',
   }),
+  angkatan: Joi.string().required().messages({
+    'string.empty': 'Angkatan tidak boleh kosong',
+  }),
   prodi: Joi.string().min(3).max(255).required().messages({
     'string.empty': 'Prodi tidak boleh kosong',
   }),

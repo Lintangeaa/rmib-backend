@@ -10,7 +10,6 @@ const Schema = Joi.object({
 
 exports.saveResult = catchAsync(async (req, res) => {
   const userId = req.user.id;
-  console.log(userId);
 
   try {
     const { result, minat } = req.body;
@@ -67,26 +66,38 @@ exports.getByUserId = catchAsync(async (req, res) => {
 });
 
 exports.getAllRmib = catchAsync(async (req, res) => {
-  const data = await Rmib.findAll({
-    include: {
-      model: User,
-      attributes: ['id', 'username', 'email', 'role'],
+  try {
+    const data = await Rmib.findAll({
       include: {
         model: Mahasiswa,
+        attribute: {
+          exclude: ['createdAt', 'updatedAt'],
+        },
+        include: {
+          model: User,
+        },
       },
-    },
-  });
-
-  if (data.length > 0) {
-    return res.status(200).json({
-      status: true,
-      message: 'Ana kie',
-      data,
     });
-  } else {
-    res.status(200).json({
+
+    if (data.length > 0) {
+      return res.status(200).json({
+        status: true,
+        message: 'Data ditemukan',
+        data: {
+          data,
+          count: data.length,
+        },
+      });
+    } else {
+      res.status(200).json({
+        status: false,
+        message: 'Data Kosong',
+      });
+    }
+  } catch (error) {
+    return res.status(200).json({
       status: false,
-      message: 'Data Kosong',
+      message: error.message,
     });
   }
 });

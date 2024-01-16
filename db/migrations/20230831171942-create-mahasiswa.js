@@ -21,6 +21,9 @@ module.exports = {
       gender: {
         type: Sequelize.ENUM(['laki-laki', 'perempuan']),
       },
+      angkatan: {
+        type: Sequelize.STRING,
+      },
       prodi: {
         type: Sequelize.STRING,
       },

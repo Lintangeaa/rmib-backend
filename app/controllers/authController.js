@@ -22,12 +22,14 @@ module.exports = {
         message: 'Masukan email dan password!',
       });
     }
+
     const data = await User.findOne({
       where: {
         email: email,
       },
       include: [{ model: Mahasiswa }],
     });
+
     if (!data) {
       return res.status(404).json({
         status: false,
@@ -73,6 +75,7 @@ module.exports = {
             nim: data.Mahasiswa?.nim ?? null,
             gender: data.Mahasiswa?.gender ?? null,
             prodi: data.Mahasiswa?.prodi ?? null,
+            angkatan: data.Mahasiswa?.angkatan ?? null,
             phone: data.Mahasiswa?.phone ?? null,
           };
 

@@ -13,8 +13,18 @@ const { User, Mahasiswa, Rmib } = require('../../db/models');
 const { userSchema, mahasiswaSchema } = require('../util/validator');
 
 exports.Register = catchAsync(async (req, res) => {
-  const { username, email, password, role, name, nim, gender, prodi, phone } =
-    req.body;
+  const {
+    username,
+    email,
+    password,
+    role,
+    name,
+    nim,
+    gender,
+    angkatan,
+    prodi,
+    phone,
+  } = req.body;
 
   await userSchema.validateAsync(
     { username, email, password, role },
@@ -38,7 +48,7 @@ exports.Register = catchAsync(async (req, res) => {
     }
   } else {
     await mahasiswaSchema.validateAsync(
-      { name, nim, gender, prodi, phone },
+      { name, nim, gender, angkatan, prodi, phone },
       { abortEarly: true },
     );
     const result = await createMahasiswa({
@@ -49,6 +59,7 @@ exports.Register = catchAsync(async (req, res) => {
       name,
       nim,
       gender,
+      angkatan,
       prodi,
       phone,
     });
@@ -95,7 +106,7 @@ exports.getAllUsers = catchAsync(async (req, res) => {
 exports.getAllMahasiswa = catchAsync(async (req, res) => {
   const { page = 1, limit = 10, name = '', nim = '' } = req.query;
   const offset = (page - 1) * limit;
-  const whereCondition = { role: 'mahasiswa' };
+  const whereCondition = { role: 'mahasiswa', status: 'aktif' };
 
   if (name) {
     whereCondition['$Mahasiswa.name$'] = { [Op.like]: `%${name}%` };
@@ -108,7 +119,7 @@ exports.getAllMahasiswa = catchAsync(async (req, res) => {
     include: [
       {
         model: Mahasiswa,
-        attributes: ['name', 'nim', 'prodi', 'phone', 'gender'],
+        attributes: ['name', 'nim', 'prodi', 'phone', 'gender', 'angkatan'],
         include: [{ model: Rmib, attributes: ['minat'] }],
       },
     ],
@@ -118,9 +129,10 @@ exports.getAllMahasiswa = catchAsync(async (req, res) => {
   });
 
   if (users.rows.length <= 0) {
-    return res.status(404).json({
+    return res.status(200).json({
       status: false,
       message: 'Mahasiswa Tidak Ditemukan!',
+      data: [],
     });
   } else {
     const data = users.rows.map((e) => {
@@ -132,6 +144,7 @@ exports.getAllMahasiswa = catchAsync(async (req, res) => {
         name: e.Mahasiswa.name,
         nim: e.Mahasiswa.nim,
         gender: e.Mahasiswa.gender,
+        angkatan: e.Mahasiswa.angkatan,
         prodi: e.Mahasiswa.prodi,
         phone: e.Mahasiswa.phone,
         minat: e.Mahasiswa?.Rmib?.minat ?? 'Belum Tes',
